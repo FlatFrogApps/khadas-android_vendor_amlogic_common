@@ -30,6 +30,7 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.os.UpdateEngine;
 import android.os.PowerManager;
+import android.os.SystemProperties;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -435,7 +436,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Pref
             mvLocal.setVisibility(View.VISIBLE);
         }
         if (checkLowerNetwork(MainActivity.this)) {
-            updateBtn.setEnabled(true);
+            updateBtn.setEnabled(SystemProperties.getBoolean("persist.updater.ota_enabled", true));
          }else {
             updateBtn.setEnabled(false);
          }
