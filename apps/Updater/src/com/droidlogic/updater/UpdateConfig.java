@@ -91,7 +91,8 @@ public class UpdateConfig implements Parcelable {
     public static UpdateConfig fromJson(String json) {
         UpdateConfig c = new UpdateConfig();
         try {
-            JSONObject o = new JSONObject(json);
+            JSONObject d = new JSONObject(json);
+            JSONObject o = d.getJSONObject("data");
             c.mName = o.getString("name");
             c.mUrl = o.getString("url");
             switch (o.getString("ab_install_type")) {
