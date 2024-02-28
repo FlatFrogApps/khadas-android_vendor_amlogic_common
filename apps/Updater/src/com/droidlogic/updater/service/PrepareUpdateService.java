@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.UpdateEngine;
 import android.os.ResultReceiver;
 import android.os.RecoverySystem;
+import android.os.SystemProperties;
 import android.util.Log;
 import android.util.Pair;
 import static com.droidlogic.updater.util.PackageFiles.COMPATIBILITY_ZIP_FILE_NAME;
@@ -186,17 +187,17 @@ public class PrepareUpdateService extends IntentService {
     public String createParams(){
         StringBuilder params = new StringBuilder();
         params.append("sn="+Build.getSerial());
-        params.append("&bdate="+Build.TIME/1000);
-        params.append("&os=android-"+Build.VERSION.RELEASE);
-        params.append("&device="+Build.DEVICE);
+        params.append("&tag="+Build.DISPLAY);
+        params.append("&product="+"cogo");
+        params.append("&bl="+Build.BOOTLOADER);
         return params.toString();
     }
     private Pair<CHECKUP_STATUS,UpdateConfig> checkCfg()throws MalformedURLException, Exception {
         CHECKUP_STATUS status = CHECKUP_STATUS.IDLE;
         mCurrentStatus = CHECKUP_STATUS.CHECKING;
-        String param ="/chk?"+createParams();
-        if (PermissionUtils.CanDebug()) Log.d(TAG,"url: "+UpdateEngineProperties.SERVER_URI+param);
-        URL url = new URL(UpdateEngineProperties.SERVER_URI+param);
+        String location = SystemProperties.get("persist.updater.ota_url", "")+"?"+createParams();
+        if (PermissionUtils.CanDebug()) Log.d(TAG,"url: "+location);
+        URL url = new URL(location);
         URLConnection connection = url.openConnection();
         connection.connect();
 
