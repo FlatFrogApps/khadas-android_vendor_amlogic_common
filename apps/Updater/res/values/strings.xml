@@ -25,6 +25,7 @@
     <string name="error_ver">"Error Ota Package Zip File"</string>
     <string name="online_pre">"Online Update:"</string>
     <string name="reboot_btn">"Reboot"</string>
+    <string name="back_btn">"Back"</string>
     <string name="update_success">"Update Success"</string>
     <string name="update_fail">"Update Failed"</string>
     <string name="result">"Checking Update Result"</string>

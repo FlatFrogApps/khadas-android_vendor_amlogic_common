@@ -5,7 +5,21 @@
     android:orientation="vertical"
     android:layout_height="match_parent">
     <LinearLayout
-        android:paddingTop="60dp"
+        android:id="@+id/layer_back"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/backbtn"
+            android:layout_width="@dimen/btn_width"
+            android:layout_height="@dimen/btn_height"
+            android:background="@drawable/menu_heighlight"
+            style="@style/ActionPrimaryButton"
+            android:text="@string/back_btn" />
+    </LinearLayout>
+    <LinearLayout
         android:id="@+id/layer_online"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

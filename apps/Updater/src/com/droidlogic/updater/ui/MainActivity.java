@@ -65,10 +65,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Pref
     private TextView mFullPath;
     private Button mBtnUpdate;
     private Button mBtnReboot;
+    private Button mBtnBack;
     private UpdateConfig currentConfig;
     private ViewGroup mUpdatePro;
     private TextView mRunningStatus;
     private ProgressBar mProgressBar;
+    private ViewGroup mvBack;
     private ViewGroup mvOnline;
     private ViewGroup mvLocal;
     private Handler mHandler = new UIHandler();
@@ -122,11 +124,14 @@ public class MainActivity extends Activity implements View.OnClickListener, Pref
         mProgressBar = findViewById(R.id.progressBar);
         mRunningStatus = findViewById(R.id.running_status);
         mvOnline = findViewById(R.id.layer_online);
+        mvBack = findViewById(R.id.layer_back);
         mvLocal = findViewById(R.id.layer_local);
         mBtnReboot = findViewById(R.id.rebootbtn);
+        mBtnBack = findViewById(R.id.backbtn);
         mBtnLocal.setOnClickListener(this);
         mBtnUpdate.setOnClickListener(this);
         mBtnReboot.setOnClickListener(this);
+        mBtnBack.setOnClickListener(this);
         mWorkerThread.start();
         Log.d("Update","onCreate");
         mWorkerHandler = new Handler(mWorkerThread.getLooper());
@@ -189,6 +194,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Pref
             if (rebootRequest) {
                 //already requestBoot,disabled but still enter
                 mRunningStatus.setText(getResources().getString(R.string.reboot_cmd));
+                mvBack.setVisibility(View.INVISIBLE);
                 mvOnline.setVisibility(View.INVISIBLE);
                 mvLocal.setVisibility(View.INVISIBLE);
                 mBtnReboot.setVisibility(View.VISIBLE);
@@ -197,6 +203,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Pref
                 return;
             } else {
                 mRunningStatus.setText(getResources().getString(R.string.wait_for_merge));
+                mvBack.setVisibility(View.INVISIBLE);
                 mvOnline.setVisibility(View.INVISIBLE);
                 mvLocal.setVisibility(View.INVISIBLE);
                 mHandler.sendEmptyMessageDelayed(MSG_WAIT_FOR_MERGE,1000);
@@ -214,6 +221,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Pref
 
     private void initialView() {
         Log.d(TAG,"initialView");
+        if (mvBack != null)
+            mvBack.setVisibility(View.VISIBLE);
         if (mvOnline != null)
             mvOnline.setVisibility(View.VISIBLE);
         if (mvLocal != null)
@@ -249,6 +258,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Pref
                     mBtnUpdate.setEnabled(false);
                     mProgressBar.setIndeterminate(true);
                     mProgressBar.setVisibility(View.VISIBLE);
+                    if (mvBack != null) mvBack.setVisibility(View.INVISIBLE);
                     if (mvOnline != null) mvOnline.setVisibility(View.INVISIBLE);
                     if (mvLocal != null) mvLocal.setVisibility(View.INVISIBLE);
                     mRunningStatus.setText(getString(R.string.prepare));
@@ -429,6 +439,9 @@ public class MainActivity extends Activity implements View.OnClickListener, Pref
     }
     private void resetUI(){
          mProgressBar.setVisibility(View.INVISIBLE);
+        if (mvBack != null && mvBack.getVisibility() == View.INVISIBLE) {
+            mvBack.setVisibility(View.VISIBLE);
+        }
          if (mvOnline != null && mvOnline.getVisibility() == View.INVISIBLE) {
             mvOnline.setVisibility(View.VISIBLE);
          }
@@ -449,6 +462,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Pref
          }else {
              mBtnUpdate.setEnabled(false);
          }
+         mBtnBack.setEnabled(true);
     }
     /**
      * Invoked when SystemUpdaterSample app state changes.
@@ -467,6 +481,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Pref
                 mProgressBar.setVisibility(View.VISIBLE);
             }
             if ( state == UpdaterState.RUNNING || state == UpdaterState.SLOT_SWITCH_REQUIRED || state == UpdaterState.REBOOT_REQUIRED) {
+                if (mvBack != null) mvBack.setVisibility(View.INVISIBLE);
                 if (mvOnline != null) mvOnline.setVisibility(View.INVISIBLE);
                 if (mvLocal != null) mvLocal.setVisibility(View.INVISIBLE);
             }
@@ -549,7 +564,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Pref
                 mPref.disableUI(true, MainActivity.this);
                 ((PowerManager)MainActivity.this.getSystemService(Context.POWER_SERVICE)).reboot("");
                 break;
-
+            case R.id.backbtn:
+                onBackPressed();
         }
     }
 
@@ -579,6 +595,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Pref
                     if (mProgressBar.getVisibility() == View.VISIBLE) {
                         mProgressBar.setVisibility(View.INVISIBLE);
                     }
+                    if (mvBack != null)
+                        mvBack.setVisibility(View.VISIBLE);
                     if (mvOnline != null)
                         mvOnline.setVisibility(View.VISIBLE);
                     if (mvLocal != null)
