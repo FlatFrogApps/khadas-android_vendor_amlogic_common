@@ -29,12 +29,10 @@
                 <action android:name="com.droidlogic.checkup.update" />
             </intent-filter>-->
        </service>
-        <!--
         <service
             android:name="com.droidlogic.updater.service.AutoCheckService"
             android:exported="true">
         </service>
-        -->
         <receiver android:name=".ui.LoaderReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
