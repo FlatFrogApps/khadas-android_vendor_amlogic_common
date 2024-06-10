@@ -188,8 +188,8 @@ public class AutoCheckService extends Service {
     class CheckRunnable implements Runnable{
         public void run() {
             if (checkLowerNetwork(AutoCheckService.this)) {
-                startCheck();
-                PrepareUpdateService.startCheckup(AutoCheckService.this,mWorkHandler,mCallback);
+                //startCheck();
+                //PrepareUpdateService.startCheckup(AutoCheckService.this,mWorkHandler,mCallback);
             }else {
                 mWorkHandler.postDelayed(checkRunner, 30000);
             }
@@ -258,10 +258,10 @@ public class AutoCheckService extends Service {
         i.putExtra("key",33);
         i.putExtra(PrepareUpdateService.EXTRA_PARAM_RESULT_RECEIVER,wrapper);Log.d(TAG,"startCheck"+mWorkHandler+"/."+wrapper+"---"+i.getIntExtra("key",0));
         pIntent = PendingIntent.getService(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);*/
-//        long triggerAtTime=SystemClock.elapsedRealtime()+HALFHOUR;
-//        Intent i=new Intent(this, AutoCheckService.class);
-//        pIntent = PendingIntent.getService(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
-//        aManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,triggerAtTime,HALFHOUR,pIntent);
+        long triggerAtTime=SystemClock.elapsedRealtime()+HALFHOUR;
+        Intent i=new Intent(this, AutoCheckService.class);
+        pIntent = PendingIntent.getService(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+        aManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,triggerAtTime,HALFHOUR,pIntent);
     }
 
     private void stopCheck() {
