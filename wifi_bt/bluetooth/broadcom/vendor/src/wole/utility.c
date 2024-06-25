@@ -113,7 +113,6 @@ void wole_config_cback(void *p_mem)
 	status = *((uint8_t *)(p_evt_buf + 1) + HCI_EVT_CMD_CMPL_STATUS_RET_BYTE);
 	p = (uint8_t *)(p_evt_buf + 1) + HCI_EVT_CMD_CMPL_OPCODE;
 	STREAM_TO_UINT16(opcode,p);
-	ALOGI("%s, status = %d, opcode=0x%x",__FUNCTION__,status,opcode);
 
 	if (status == 0) //command is supported and everything is fine.
 	{
@@ -121,16 +120,18 @@ void wole_config_cback(void *p_mem)
 		wake_signal_sent=1;
 		pthread_cond_signal(&s_vsccond);
 		pthread_mutex_unlock(&s_vsclock);
-
 	}
-	else if (status == 3)
-		kill(getpid(),SIGKILL);
-
+	else
+	{
+		ALOGI("%s, status = %d, opcode=0x%x",__FUNCTION__,status,opcode);
+		if (status == 3) {
+			kill(getpid(),SIGKILL);
+		}
+	}
 
 	/* Free the RX event buffer */
 	if (bt_vendor_cbacks)
 		bt_vendor_cbacks->dealloc(p_evt_buf);
-
 }
 
 void wole_config_write_default_hostwake_state(int default_state)
