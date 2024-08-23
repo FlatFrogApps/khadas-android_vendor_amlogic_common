@@ -188,7 +188,7 @@ public class PrepareUpdateService extends IntentService {
         StringBuilder params = new StringBuilder();
         params.append("sn="+Build.getSerial());
         params.append("&tag="+Build.DISPLAY);
-        params.append("&product="+"cogo");
+        params.append("&product="+SystemProperties.get("ro.flatfrog.product"));
         params.append("&bl="+Build.BOOTLOADER);
         return params.toString();
     }
