@@ -664,7 +664,7 @@ public abstract class TvInputBaseSession extends TvInputService.Session implemen
             if (m.find()) {
               result = Integer.valueOf(m.group(0));
             } else {
-                Log.d(TAG, "parseFirstValidIntergerByPattern not matched");
+                // Log.d(TAG, "parseFirstValidIntergerByPattern not matched");
             }
         } catch (Exception e) {
             Log.d(TAG, "parseFirstValidIntergerByPattern Exception = " + e.getMessage());
