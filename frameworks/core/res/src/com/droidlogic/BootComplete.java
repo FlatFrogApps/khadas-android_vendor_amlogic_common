@@ -178,9 +178,9 @@ public class BootComplete extends BroadcastReceiver {
 
                         Log.d(TAG, "onChange developerOptionsEnabled=" + developerOptionsEnabled);
                         if (developerOptionsEnabled) {
-                            context.startService(new Intent(context, ThermalService.class));
+                            // context.startService(new Intent(context, ThermalService.class));
                         } else {
-                            context.stopService(new Intent(context, ThermalService.class));
+                            // context.stopService(new Intent(context, ThermalService.class));
                         }
                     }
                 };
