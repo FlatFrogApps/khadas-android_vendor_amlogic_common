@@ -21,11 +21,11 @@ CDevicePollCheckThread::CDevicePollCheckThread()
     }
 
     //VFrameSize change
-    if (mVFrameSizeFile.openFile(VFRAME_MOUDLE_PATH) > 0) {
+    /*if (mVFrameSizeFile.openFile(VFRAME_MOUDLE_PATH) > 0) {
         m_event.data.fd = mVFrameSizeFile.getFd();
         m_event.events = EPOLLIN | EPOLLET;
         mEpoll.add(mVFrameSizeFile.getFd(), &m_event);
-    }
+    }*/
     //TX
     if (mTXStatusFile.openFile(TX_MOUDLE_PATH) > 0) {
         m_event.data.fd = mTXStatusFile.getFd();
@@ -61,9 +61,9 @@ bool CDevicePollCheckThread::threadLoop()
              * EPOLLIN event
              */
             if ((mEpoll)[i].events & EPOLLIN) {
-                if (fd == mVFrameSizeFile.getFd()) {//vframesize change
+                /*if (fd == mVFrameSizeFile.getFd()) {//vframesize change
                     mpObserver->onVframeSizeChange();
-                } else if (fd == mTXStatusFile.getFd()) {//TX
+                } else*/ if (fd == mTXStatusFile.getFd()) {//TX
                     mpObserver->onTXStatusChange();
                 }
 
