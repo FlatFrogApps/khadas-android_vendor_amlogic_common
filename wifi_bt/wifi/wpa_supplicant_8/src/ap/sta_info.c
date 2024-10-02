@@ -1478,7 +1478,7 @@ void ap_sta_delayed_1x_auth_fail_disconnect(struct hostapd_data *hapd,
 {
 	wpa_dbg(hapd->msg_ctx, MSG_DEBUG,
 		"IEEE 802.1X: Force disconnection of " MACSTR
-		" after EAP-Failure in 10 ms", MAC2STR(sta->addr));
+		" after EAP-Failure in 100 ms", MAC2STR(sta->addr));
 
 	/*
 	 * Add a small sleep to increase likelihood of previously requested
@@ -1486,7 +1486,7 @@ void ap_sta_delayed_1x_auth_fail_disconnect(struct hostapd_data *hapd,
 	 * operations.
 	 */
 	eloop_cancel_timeout(ap_sta_delayed_1x_auth_fail_cb, hapd, sta);
-	eloop_register_timeout(0, 10000, ap_sta_delayed_1x_auth_fail_cb,
+	eloop_register_timeout(0, 100000, ap_sta_delayed_1x_auth_fail_cb,
 			       hapd, sta);
 }
 
