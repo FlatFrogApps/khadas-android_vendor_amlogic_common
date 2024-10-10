@@ -1460,7 +1460,7 @@ static void ap_sta_delayed_1x_auth_fail_cb(void *eloop_ctx, void *timeout_ctx)
 	struct sta_info *sta = timeout_ctx;
 	u16 reason;
 
-	wpa_dbg(hapd->msg_ctx, MSG_DEBUG,
+	wpa_msg(hapd->msg_ctx, MSG_INFO,
 		"IEEE 802.1X: Scheduled disconnection of " MACSTR
 		" after EAP-Failure", MAC2STR(sta->addr));
 
@@ -1476,7 +1476,7 @@ static void ap_sta_delayed_1x_auth_fail_cb(void *eloop_ctx, void *timeout_ctx)
 void ap_sta_delayed_1x_auth_fail_disconnect(struct hostapd_data *hapd,
 					    struct sta_info *sta)
 {
-	wpa_dbg(hapd->msg_ctx, MSG_DEBUG,
+	wpa_msg(hapd->msg_ctx, MSG_INFO,
 		"IEEE 802.1X: Force disconnection of " MACSTR
 		" after EAP-Failure in 100 ms", MAC2STR(sta->addr));
 
