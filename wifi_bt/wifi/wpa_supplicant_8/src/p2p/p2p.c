@@ -1785,7 +1785,9 @@ int p2p_go_params(struct p2p_data *p2p, struct p2p_go_neg_results *params)
 	if (p2p->passphrase_set) {
 		os_memcpy(params->passphrase, p2p->passphrase, os_strlen(p2p->passphrase));
 	} else {
-		p2p_random(params->passphrase, p2p->cfg->passphrase_len);
+		p2p_set_passphrase_len(p2p, 8);
+		memcpy(params->passphrase, "12345678", 8);
+		// p2p_random(params->passphrase, p2p->cfg->passphrase_len);
 	}
 	p2p->passphrase_set = 0;
 	return 0;
@@ -1819,7 +1821,9 @@ void p2p_go_complete(struct p2p_data *p2p, struct p2p_device *peer)
 					       p2p->op_channel);
 		os_memcpy(res.ssid, p2p->ssid, p2p->ssid_len);
 		res.ssid_len = p2p->ssid_len;
-		p2p_random(res.passphrase, p2p->cfg->passphrase_len);
+		p2p_set_passphrase_len(p2p, 8);
+		memcpy(res.passphrase, "12345678", 8);
+		// p2p_random(res.passphrase, p2p->cfg->passphrase_len);
 	} else {
 		res.freq = peer->oper_freq;
 		if (p2p->ssid_len) {
