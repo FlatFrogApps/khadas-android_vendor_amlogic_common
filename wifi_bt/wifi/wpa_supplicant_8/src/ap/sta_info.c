@@ -39,6 +39,11 @@
 #include "sta_info.h"
 #include "vlan.h"
 #include "wps_hostapd.h"
+#include <arpa/inet.h>
+#include <sys/ioctl.h>
+#include <net/if_arp.h>
+#include <net/if.h>
+#include <sys/socket.h>
 
 static void ap_sta_remove_in_other_bss(struct hostapd_data *hapd,
 				       struct sta_info *sta);
@@ -1224,6 +1229,62 @@ const char * ap_sta_wpa_get_keyid(struct hostapd_data *hapd,
 }
 
 
+void ap_modify_ip_in_arp(struct hostapd_data *hapd,  struct sta_info *sta,
+			u8 *ip_addr_buf, int authorized)
+{
+	struct arpreq arp_req;
+	struct sockaddr_in* sin;
+	int sockfd;
+
+	// Create a socket
+	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+	if (sockfd < 0) {
+		wpa_printf(MSG_ERROR, "Socket creation failed");
+		return;
+	}
+
+	// Zero out the arp_req structure
+	memset(&arp_req, 0, sizeof(struct arpreq));
+
+	// Copy the IP address
+	sin = (struct sockaddr_in*)&arp_req.arp_pa;
+	sin->sin_family = AF_INET;
+	// NOTE: Assume ip_addr_buf is of length 4
+	memcpy(&sin->sin_addr.s_addr, ip_addr_buf, sizeof(sin->sin_addr.s_addr));
+
+	// Copy the MAC address
+	memcpy(&arp_req.arp_ha.sa_data, &sta->addr, 6);
+	arp_req.arp_ha.sa_family = ARPHRD_ETHER;
+
+	// Specify the interface
+	strncpy(arp_req.arp_dev, hapd->conf->iface, IFNAMSIZ - 1);
+
+	unsigned long _ioctl;
+	if (authorized) {
+		// Set the ARP entry flags
+		arp_req.arp_flags = ATF_COM;
+		_ioctl = SIOCSARP;
+	} else {
+		_ioctl = SIOCDARP;
+	}
+
+	// Modify the ARP table using ioctl()
+	if (ioctl(sockfd, _ioctl, &arp_req) < 0) {
+		wpa_printf(MSG_ERROR, "ioctl(%s) failed", authorized ? "SIOCSARP" : "SIOCDARP");
+		close(sockfd);
+		return;
+	}
+
+	wpa_printf(MSG_INFO, "ARP entry successfully %s: IP %s -> MAC %02x:%02x:%02x:%02x:%02x:%02x\n",
+				authorized ? "added" : "removed",
+				inet_ntoa(sin->sin_addr),
+				sta->addr[0], sta->addr[1], sta->addr[2],
+				sta->addr[3], sta->addr[4], sta->addr[5]);
+
+	close(sockfd);
+}
+
+
 void ap_sta_set_authorized(struct hostapd_data *hapd, struct sta_info *sta,
 			   int authorized)
 {
@@ -1260,6 +1321,12 @@ void ap_sta_set_authorized(struct hostapd_data *hapd, struct sta_info *sta,
 	if (hapd->sta_authorized_cb)
 		hapd->sta_authorized_cb(hapd->sta_authorized_cb_ctx,
 					sta->addr, authorized, dev_addr);
+
+#ifdef CONFIG_P2P
+	if (wpa_auth_get_ip_addr(sta->wpa_sm, ip_addr_buf) == 0) {
+		ap_modify_ip_in_arp(hapd, sta, ip_addr_buf, authorized);
+	}
+#endif /* CONFIG_P2P */
 
 	if (authorized) {
 		const char *keyid;
