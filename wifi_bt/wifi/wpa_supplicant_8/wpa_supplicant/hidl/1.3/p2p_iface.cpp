@@ -1149,7 +1149,7 @@ SupplicantStatus P2pIface::addGroupInternal(
 	    wpa_config_get_network(wpa_s->conf, persistent_network_id);
 	if (ssid == NULL) {
 		if (wpas_p2p_group_add(
-			wpa_s, persistent, 0, 0, ht40, vht,
+			wpa_s, persistent, 5, 0, ht40, vht,
 			CHANWIDTH_USE_HT, he, 0)) {
 			return {SupplicantStatusCode::FAILURE_UNKNOWN, ""};
 		} else {
@@ -1157,7 +1157,7 @@ SupplicantStatus P2pIface::addGroupInternal(
 		}
 	} else if (ssid->disabled == 2) {
 		if (wpas_p2p_group_add_persistent(
-			wpa_s, ssid, 0, 0, 0, 0, ht40, vht,
+			wpa_s, ssid, 0, 5, 0, 0, ht40, vht,
 			CHANWIDTH_USE_HT, he, 0, NULL, 0, 0)) {
 			return {SupplicantStatusCode::FAILURE_NETWORK_UNKNOWN,
 				""};
